@@ -82,5 +82,10 @@ module.exports.updateUser = (req, res, next) => {
       checkDataFound(user, ERROR_MESSAGE.notFound);
       res.send(user);
     })
-    .catch((err) => handleError(err, next, ERROR_MESSAGE));
+    .catch((err) => {
+      if (err.code === 11000) {
+        return next(new ConflictError('Пользователь по указанному email уже зарегистрирован'));
+      }
+      handleError(err, next, ERROR_MESSAGE);
+    });
 };
